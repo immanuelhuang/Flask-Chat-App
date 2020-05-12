@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+    <!-- FontAwesome CSS -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+
+    <!-- Simplebar JS and CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/simplebar@latest/dist/simplebar.css">
+    <script src="https://unpkg.com/simplebar@latest/dist/simplebar.js"></script>
+
+    <!-- Handelbars JS -->
+    <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
+
+    <!-- Websocket JS -->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js" integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
+
+    <!-- JS -->
+    <script src="{{ url_for('static', filename='index.js') }}"></script>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
+
+    <!-- Handlebars Message Templates -->
+    <script id="message-other-template" type="text/x-handlebars-template">
+      <div>
+        {% raw %}
+        <h6 class="ml-2 mt-1 text-left">{{ name }}</h6>
+        <div class="row mx-1 justify-content-start">
+          <div data-name="{{ name }}" style="max-width: 40%;" class="message p-2 text-dark bg-light col-auto text-left border rounded-right text-break">
+            {{ content }}
+            <span class="tooltiptext">{{ timestamp }}</span>
+          </div>
+        </div>
+        {% endraw %}
+      </div>
+    </script>
+    <script id="message-user-template" type="text/x-handlebars-template">
+      <div>
+        {% raw %}
+        <h6 class="mr-1 mt-1 text-right">{{ name }}</h6>
+        <div class="row mx-1 justify-content-end">
+          <div data-name="{{ name }}" style="max-width: 40%;" class="message p-2 text-white bg-primary col-auto text-left border rounded-left text-break">
+            {{ content }}
+            <span class="tooltiptext">{{ timestamp }}</span>
+          </div>
+        </div>
+        {% endraw %}
+      </div>
+    </script>
+
+    <!-- Channels Template -->
+    <script id="channel-template" type="text/x-handlebars-template">
+      <div>
+        {% raw %}
+        <tr id="{{ name }}" class="table-row table">    
+          <td class="d-none d-sm-block"><a href="#" class="text-decoration-none text-reset">{{ name }}</a></td>
+        </tr>
+        {% endraw %}
+      </div>
+    </script>
+
+    <title>Flack</title>
+  </head>
+  <body onbeforeunload="exit()">
+    <div class="container-fluid h-100">
+      <div class="row h-100">
+        <div class="col-12">
+          <div class="h-100 d-flex flex-column">
+
+            <!-- Header -->
+            <div class="row bg-secondary text-light">
+               <nav class="col-12 navbar navbar-expand navbar-dark">
+                <a class="navbar-brand">Flask Messenger</a>
+                <div class="navbar-nav ml-auto">
+                    <span id="username-display" class="d-none d-sm-block navbar-brand"><!-- Username goes here --></span>
+                </div>
+              </nav>
+            </div>
+            
+            <!-- Body -->
+            <div class="row bg-light">
+              
+              <!-- Channels Sidebar -->
+              <div style="height: 90vh;" data-simplebar class="area col-md-4 col-lg-3 overflow-auto">
+                <form id="channel-form" class="mt-2">
+                  <div class="form-row">
+                    <div class="input-group col-10">
+                      <div class="input-group-prepend">
+                        <div class="input-group-text">#</div>
+                      </div>
+                      <input id="channel-input" type="text" class="form-control" placeholder="Channel">
+                    </div>
+                    <div class="col-2">
+                      <button id="channel-submit" type="submit" class="btn btn-block btn-primary"><i class="fas fa-plus"></i></button>
+                    </div>
+                  </div>
+                </form>
+                <table class="mt-2 table table-hover">
+                  <tbody id="channel-display">
+                    <!-- Channls go here -->
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- Active Channel -->
+              <div class="col-md-8 col-lg-9 bg-white">
+
+                <!-- Message Display Section -->
+                <div id="message-scroll" style="height: 84vh;" class="scrollbar mb-1 area col-12 overflow-auto">
+                  <div class="row">
+                    <div id="message-display" class="col-12">
+                      <!-- Messages go here -->
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Message Sending Section -->
+                <div class="col-12">
+                  <form id="message-form">
+                    <div class="form-group row">
+                      <div class="col-lg-11 col-md-10">
+                        <input id="message-input" type="text" autocomplete="off" class="form-control" placeholder="Type a message">
+                      </div>
+                      <div class="col-lg-1 col-md-2">
+                        <button id="message-submit" type="submit" class="btn btn-primary btn-block"><i class="far fa-paper-plane"></i></button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+
+              </div>
+
+            </div>
+            
+            <!-- Bottom of Screen -->
+            <div class="row bg-light flex-grow-1">
+              <div class="col-12"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+  </body>
+</html>
