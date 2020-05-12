@@ -1,6 +1,6 @@
 # Flask Chat App
 
-A messaging app created to leverage skills I've learned. Front-end created using HTML/CSS, Bootstraps, and Javascript. Back-end created using Flask. Front-end and back-end connected by Websockets and AJAX.
+A messaging web app created to leverage skills I've learned. Front-end created using HTML/CSS, Bootstraps, and Javascript. Back-end created using Flask. Front-end and back-end connected by Websockets and AJAX.
 
 ## Features
 * **Sending Messages:** messages sent in real time displaying sender name, contents, and timestamp.
